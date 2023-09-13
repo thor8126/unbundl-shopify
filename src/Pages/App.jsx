@@ -8,21 +8,11 @@ import CheckoutPage from "../components/CheckoutPage";
 import Cart from "./Cart";
 import Profile from "../components/Profile";
 import Empty from "./Empty";
-import {loadStripe} from '@stripe/stripe-js';
-import {
-  PaymentElement,
-  Elements,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
 
 export default function App() {
   const { isAuthenticated, user ,isLoading,error} = useAuth0();
-  const [errorMessage, setErrorMessage] = useState(null);
 
   const [theme, setTheme] = useState("dark");
-  const stripe = useStripe();
-  const elements = useElements();
 
   const [chocolates, setChocolates] = useState([
     { id: 1, name: 'Milk Chocolate', price: 2.5, image:'https://images.unsplash.com/photo-1623660053975-cf75a8be0908?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y2hvY29sYXRlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60' },
@@ -83,66 +73,8 @@ export default function App() {
 
 
 
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (elements == null) {
-      return;
-    }
-
-    // Trigger form validation and wallet collection
-    const {error: submitError} = await elements.submit();
-    if (submitError) {
-      // Show error to your customer
-      setErrorMessage(submitError.message);
-      return;
-    }
-
-    // Create the PaymentIntent and obtain clientSecret from your server endpoint
-    const res = await fetch('/create-intent', {
-      method: 'POST',
-    });
-
-
-    const clientSecret = 'sk_test_51NpQzsSB3MkUDRfQ6dnzwKbI2sb8yOfvt03NTpKCcpLIxwTOlGzHmSt29y0fFLiInEIp8K6oBd7ENMiu14IIMiQh00OmgZCYLR';
-
-    const {error} = await stripe.confirmPayment({
-      //`Elements` instance that was used to create the Payment Element
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: 'http:localhost:5173/',
-      },
-    });
-
-    if (error) {
-      // This point will only be reached if there is an immediate error when
-      // confirming the payment. Show error to your customer (for example, payment
-      // details incomplete)
-      setErrorMessage(error.message);
-    } else {
-      // Your customer will be redirected to your `return_url`. For some payment
-      // methods like iDEAL, your customer will be redirected to an intermediate
-      // site first to authorize the payment, then redirected to the `return_url`.
-    }
-  };
-
-  
-  const stripePromise = loadStripe('pk_test_51NpQzsSB3MkUDRfQ9krmA6RP7FVZdINfv2OJWdsAvmDDsnYlg2qXHZMlkVpEZcBZwlYwylGvYjGNJyQo96cnVMro00aMjUFpQA');
-
-  const options = {
-    mode: 'payment',
-    amount: 1099,
-    currency: 'usd',
-    // Fully customizable with appearance API.
-    appearance: {
-      /*...*/
-    },
-  };
   return (
     <>
-    <Elements stripe={stripePromise} options={options}>
       {isLoading && <Loader />}
 
       {!isLoading && <Navbar user={user} theme={theme} setTheme={setTheme} total={total} totalItems={totalItems} selectedChocolates={selectedChocolates}/>}
@@ -169,7 +101,6 @@ export default function App() {
           </Routes>
         )}
       </div>
-      </Elements>
     </>
   );
 }
