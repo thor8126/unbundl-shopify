@@ -3,6 +3,7 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import App from "./Pages/App";
 import { BrowserRouter as Router } from "react-router-dom";
 
+
 const root = createRoot(document.getElementById("root"));
 
 root.render(
