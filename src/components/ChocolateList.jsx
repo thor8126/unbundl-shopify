@@ -30,7 +30,7 @@ const ChocolateList = ({ chocolates, onSelect, selectedChocolates }) => {
                   />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold">{chocolate.name}</h3>
+              <h3 className="text-sm text-white font-semibold">{chocolate.name}</h3>
               <p className="text-sm">Price: <span className="text-white">${chocolate.price}</span></p>
               <div className="mt-auto">
                 <button
